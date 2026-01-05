@@ -9,6 +9,7 @@ export interface SaleRecord {
 export interface CategoryData {
   name: string;
   value: number;
+  icon: string; // SVG path or identifier
 }
 
 export interface Order {

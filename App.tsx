@@ -82,7 +82,7 @@ const App: React.FC = () => {
             <>
               <StatCard 
                 title="إجمالي مبيعات المتجر" 
-                value={`${stats?.totalSales.toLocaleString()} ريال`}
+                value={`${stats?.totalSales.toLocaleString()} دينار`}
                 change="12%" 
                 isPositive={true}
                 icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
@@ -137,7 +137,7 @@ const App: React.FC = () => {
                   <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
                   <Tooltip 
                     contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
-                    formatter={(value: number) => [`${value.toLocaleString()} ريال`, 'المبيعات']}
+                    formatter={(value: number) => [`${value.toLocaleString()} دينار`, 'المبيعات']}
                   />
                   <Area type="monotone" dataKey="sales" stroke="#0f172a" strokeWidth={3} fillOpacity={1} fill="url(#colorSales)" />
                 </AreaChart>
@@ -180,7 +180,7 @@ const App: React.FC = () => {
             {/* DB Health & Stats */}
             <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
               <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" /></svg>
+                <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" /></svg>
                 أداء السيرفر
               </h3>
               <div className="space-y-4">
@@ -200,55 +200,102 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        {/* Database Sync Table */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-          <div className="p-6 border-b border-slate-50 flex justify-between items-center">
-            <h2 className="text-xl font-bold text-slate-900">سجل المعاملات المباشر</h2>
-            <div className="flex gap-2">
-              <input type="text" placeholder="ابحث في قاعدة البيانات..." className="text-xs border border-slate-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-slate-900 w-64" />
+        {/* Categories and Recent Orders */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          {/* Category Distribution */}
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+            <h2 className="text-xl font-bold text-slate-900 mb-6">توزيع الفئات</h2>
+            <div className="h-64 relative mb-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={CATEGORY_DATA}
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {CATEGORY_DATA.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <span className="text-xl font-bold text-slate-900">100%</span>
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              {CATEGORY_DATA.map((cat, idx) => (
+                <div key={cat.name} className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${COLORS[idx % COLORS.length]}15`, color: COLORS[idx % COLORS.length] }}>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={cat.icon} />
+                      </svg>
+                    </div>
+                    <span className="text-sm font-medium text-slate-700">{cat.name}</span>
+                  </div>
+                  <span className="text-sm font-bold text-slate-900">{cat.value}%</span>
+                </div>
+              ))}
             </div>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-right">
-              <thead>
-                <tr className="bg-slate-50 text-slate-500 text-sm">
-                  <th className="px-6 py-4 font-medium">رقم العملية</th>
-                  <th className="px-6 py-4 font-medium">العميل</th>
-                  <th className="px-6 py-4 font-medium">المنتج المحجوز</th>
-                  <th className="px-6 py-4 font-medium">المبلغ</th>
-                  <th className="px-6 py-4 font-medium">حالة المزامنة</th>
-                  <th className="px-6 py-4 font-medium">التوقيت</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50 text-sm">
-                {loadingData ? (
-                  [...Array(3)].map((_, i) => (
-                    <tr key={i} className="animate-pulse">
-                      <td colSpan={6} className="px-6 py-6 bg-slate-50/30"></td>
-                    </tr>
-                  ))
-                ) : (
-                  orders.map((order) => (
-                    <tr key={order.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="px-6 py-4 font-mono font-bold text-slate-900">{order.id}</td>
-                      <td className="px-6 py-4">{order.customer}</td>
-                      <td className="px-6 py-4">{order.product}</td>
-                      <td className="px-6 py-4 font-bold text-slate-900">{order.amount.toLocaleString()} ريال</td>
-                      <td className="px-6 py-4">
-                        <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase
-                          ${order.status === 'تم التوصيل' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 
-                            order.status === 'قيد المعالجة' ? 'bg-amber-50 text-amber-600 border border-amber-100' : 
-                            'bg-rose-50 text-rose-600 border border-rose-100'}`}>
-                          <span className={`w-1 h-1 rounded-full ${order.status === 'تم التوصيل' ? 'bg-emerald-600' : 'bg-rose-600'}`}></span>
-                          {order.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-slate-400">{order.date}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+
+          {/* Database Sync Table */}
+          <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            <div className="p-6 border-b border-slate-50 flex justify-between items-center">
+              <h2 className="text-xl font-bold text-slate-900">سجل المعاملات المباشر</h2>
+              <div className="flex gap-2">
+                <input type="text" placeholder="ابحث في قاعدة البيانات..." className="text-xs border border-slate-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-slate-900 w-64" />
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-right">
+                <thead>
+                  <tr className="bg-slate-50 text-slate-500 text-sm">
+                    <th className="px-6 py-4 font-medium">رقم العملية</th>
+                    <th className="px-6 py-4 font-medium">العميل</th>
+                    <th className="px-6 py-4 font-medium">المنتج المحجوز</th>
+                    <th className="px-6 py-4 font-medium">المبلغ</th>
+                    <th className="px-6 py-4 font-medium">حالة المزامنة</th>
+                    <th className="px-6 py-4 font-medium">التوقيت</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50 text-sm">
+                  {loadingData ? (
+                    [...Array(3)].map((_, i) => (
+                      <tr key={i} className="animate-pulse">
+                        <td colSpan={6} className="px-6 py-6 bg-slate-50/30"></td>
+                      </tr>
+                    ))
+                  ) : (
+                    orders.map((order) => (
+                      <tr key={order.id} className="hover:bg-slate-50 transition-colors">
+                        <td className="px-6 py-4 font-mono font-bold text-slate-900">{order.id}</td>
+                        <td className="px-6 py-4">{order.customer}</td>
+                        <td className="px-6 py-4">{order.product}</td>
+                        <td className="px-6 py-4 font-bold text-slate-900">{order.amount.toLocaleString()} دينار</td>
+                        <td className="px-6 py-4">
+                          <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase
+                            ${order.status === 'تم التوصيل' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 
+                              order.status === 'قيد المعالجة' ? 'bg-amber-50 text-amber-600 border border-amber-100' : 
+                              'bg-rose-50 text-rose-600 border border-rose-100'}`}>
+                            <span className={`w-1 h-1 rounded-full ${order.status === 'تم التوصيل' ? 'bg-emerald-600' : 'bg-rose-600'}`}></span>
+                            {order.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-slate-400">{order.date}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </main>

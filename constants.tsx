@@ -11,10 +11,26 @@ export const MOCK_SALES_DATA: SaleRecord[] = [
 ];
 
 export const CATEGORY_DATA: CategoryData[] = [
-  { name: 'خيام ملكية', value: 45 },
-  { name: 'خيام رحلات', value: 25 },
-  { name: 'خيام شفافة', value: 20 },
-  { name: 'ملحقات', value: 10 },
+  { 
+    name: 'خيام ملكية', 
+    value: 45, 
+    icon: 'M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z' // Crown icon
+  },
+  { 
+    name: 'خيام رحلات', 
+    value: 25, 
+    icon: 'M12 2L2 19h20L12 2zm0 4l6.5 11h-13L12 6z' // Tent icon
+  },
+  { 
+    name: 'خيام شفافة', 
+    value: 20, 
+    icon: 'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z' // Glass/Box icon
+  },
+  { 
+    name: 'ملحقات', 
+    value: 10, 
+    icon: 'M19 11H5m14 0a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2m14 0V9a2 2 0 0 0-2-2M5 11V9a2 2 0 0 1 2-2m0 0V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2M7 7h10' // Bag icon
+  },
 ];
 
 export const RECENT_ORDERS: Order[] = [
@@ -33,4 +49,4 @@ export const DASHBOARD_STATS: DashboardStats = {
   growthRate: 12.5,
 };
 
-export const COLORS = ['#0f172a', '#1e293b', '#334155', '#475569', '#64748b'];
+export const COLORS = ['#0f172a', '#334155', '#475569', '#94a3b8', '#cbd5e1'];
