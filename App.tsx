@@ -59,11 +59,11 @@ const App: React.FC = () => {
           </div>
           <div className="flex gap-4">
             <button 
-              onClick={fetchData}
+              onClick={() => { fetchData(); setLoadingAI(true); getAIInsights().then(setAiAnalysis).finally(() => setLoadingAI(false)); }}
               className="bg-white p-2 border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors"
-              title="تحديث البيانات من السيرفر"
+              title="تحديث البيانات والتحليلات"
             >
-              <svg className={`w-5 h-5 ${loadingData ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+              <svg className={`w-5 h-5 ${loadingData || loadingAI ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
             </button>
             <button className="bg-slate-900 text-white px-6 py-2 rounded-xl font-medium hover:bg-slate-800 transition-all flex items-center gap-2 shadow-lg shadow-slate-200">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
@@ -117,10 +117,8 @@ const App: React.FC = () => {
           <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-bold text-slate-900">تدفق المبيعات المباشر</h2>
-              <div className="flex gap-2">
-                <span className="flex items-center gap-1 text-xs font-bold px-2 py-1 bg-blue-50 text-blue-600 rounded-md">
-                   بيانات حقيقية
-                </span>
+              <div className="flex gap-2 text-xs font-bold text-slate-500">
+                <span className="flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-1 rounded-md">6 شهور الأخيرة</span>
               </div>
             </div>
             <div className="h-80 w-full">
@@ -146,31 +144,64 @@ const App: React.FC = () => {
           </div>
 
           <div className="space-y-8">
-            {/* AI Insights from Database */}
-            <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-lg relative overflow-hidden group">
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-indigo-500/20 rounded-lg flex items-center justify-center">
-                      <svg className="w-4 h-4 text-indigo-400" fill="currentColor" viewBox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" /></svg>
+            {/* AI Insights & Action Plan */}
+            <div className="bg-slate-900 text-white p-6 rounded-3xl shadow-2xl relative overflow-hidden flex flex-col min-h-[480px]">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+              
+              <div className="relative z-10 flex flex-col h-full">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20">
+                      <svg className="w-6 h-6 text-indigo-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" /></svg>
                     </div>
-                    <h3 className="font-bold">المساعد الذكي (Gemini)</h3>
+                    <div>
+                      <h3 className="font-bold text-lg">تحليل Gemini الذكي</h3>
+                      <span className="text-[10px] text-indigo-300 uppercase font-black tracking-widest">Actionable Intelligence</span>
+                    </div>
                   </div>
-                  <button onClick={() => fetchData()} className="text-xs text-indigo-400 hover:text-indigo-300">تحديث التحليل</button>
+                  {aiAnalysis?.inventoryStatus && (
+                    <span className="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-1 rounded-lg font-bold">
+                      مخزون: {aiAnalysis.inventoryStatus}
+                    </span>
+                  )}
                 </div>
+
                 {loadingAI ? (
-                  <div className="animate-pulse space-y-3">
-                    <div className="h-4 bg-slate-700 rounded w-3/4"></div>
-                    <div className="h-4 bg-slate-700 rounded w-5/6"></div>
+                  <div className="space-y-4 animate-pulse">
+                    <div className="h-4 bg-white/5 rounded w-full"></div>
+                    <div className="h-4 bg-white/5 rounded w-5/6"></div>
+                    <div className="h-32 bg-white/5 rounded-2xl w-full mt-6"></div>
                   </div>
                 ) : (
-                  <div className="text-sm space-y-4">
-                    <p className="text-slate-300 leading-relaxed pr-3 border-r-2 border-indigo-500">
+                  <div className="flex flex-col flex-grow">
+                    <p className="text-slate-300 text-sm leading-relaxed mb-6 border-r-2 border-indigo-500 pr-4">
                       {aiAnalysis?.analysis}
                     </p>
-                    <div className="bg-white/5 p-3 rounded-xl border border-white/10">
-                      <span className="text-xs text-indigo-400 font-bold block mb-1">توصية قاعدة البيانات:</span>
-                      <p className="text-xs text-slate-200">{aiAnalysis?.inventoryTip}</p>
+
+                    <div className="mb-6">
+                      <h4 className="text-xs font-black text-indigo-400 uppercase tracking-tighter mb-3">كلمات مفتاحية للأداء:</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {aiAnalysis?.keywords?.map((word: string, i: number) => (
+                          <span key={i} className="text-[10px] bg-white/5 border border-white/10 px-2 py-1 rounded-md text-slate-300">
+                            #{word}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="bg-white/5 rounded-2xl p-4 border border-white/10 mt-auto">
+                      <h4 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                        <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        خطة العمل الفورية:
+                      </h4>
+                      <ul className="space-y-2">
+                        {aiAnalysis?.actionPlan?.map((item: string, i: number) => (
+                          <li key={i} className="flex gap-2 items-start text-xs text-slate-300">
+                            <span className="w-4 h-4 bg-indigo-500/20 rounded flex-shrink-0 flex items-center justify-center text-[10px] text-indigo-400 font-bold">{i+1}</span>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
                 )}
@@ -180,7 +211,7 @@ const App: React.FC = () => {
             {/* DB Health & Stats */}
             <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
               <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" /></svg>
+                <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" /></svg>
                 أداء السيرفر
               </h3>
               <div className="space-y-4">
@@ -190,10 +221,6 @@ const App: React.FC = () => {
                 </div>
                 <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
                   <div className="bg-green-500 h-full w-[85%]"></div>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-slate-500">سعة التخزين</span>
-                  <span className="text-slate-700 font-bold">12.4 GB</span>
                 </div>
               </div>
             </div>
@@ -251,7 +278,7 @@ const App: React.FC = () => {
             <div className="p-6 border-b border-slate-50 flex justify-between items-center">
               <h2 className="text-xl font-bold text-slate-900">سجل المعاملات المباشر</h2>
               <div className="flex gap-2">
-                <input type="text" placeholder="ابحث في قاعدة البيانات..." className="text-xs border border-slate-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-slate-900 w-64" />
+                <input type="text" placeholder="ابحث في قاعدة البيانات..." className="text-xs border border-slate-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-slate-900 w-64 text-right" dir="rtl" />
               </div>
             </div>
             <div className="overflow-x-auto">
